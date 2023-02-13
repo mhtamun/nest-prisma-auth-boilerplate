@@ -11,30 +11,49 @@ datasource db {
 }
 
 model User {
-  id        Int      @default(autoincrement())
+  id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
+  role      Role[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  bookmarks Bookmark[]
-
-  @@unique([id])
   @@map("users")
 }
 
-model Bookmark {
-  id        Int      @id @default(autoincrement())
+model Role {
+  id         String       @id @default(uuid())
+  name       String       @unique
+  module     Module[]
+  userId     String
+  user       User         @relation(fields: [userId], references: [id])
+  isDeleted  Boolean      @default(false)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Permission Permission[]
+
+  @@map("roles")
+}
+
+model Module {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  roleId    String
+  role      Role     @relation(fields: [roleId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  title       String
-  description String
-  link        String?
+  @@map("modules")
+}
 
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+model Permission {
+  id        String   @id @default(uuid())
+  roleId    String
+  role      Role     @relation(fields: [roleId], references: [id])
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@map("bookmarks")
+  @@map("permissions")
 }
