@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   mixin,
   Type,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtGuard } from './jwt.guard';
 
@@ -27,7 +28,11 @@ export const PermissionGuard = (
       );
 
       // todo: implement check permissions
-      return false;
+
+      if (!user)
+        throw new UnauthorizedException();
+
+      return true;
     }
   }
 

@@ -1,7 +1,6 @@
 import {
   Injectable,
   UnauthorizedException,
-  Request,
 } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import {
