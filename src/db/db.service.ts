@@ -1,9 +1,9 @@
+import { PrismaClient } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient } from '@prisma/client';
 
 @Injectable()
-export class PrismaService extends PrismaClient {
+export class DbService extends PrismaClient {
   constructor(config: ConfigService) {
     super({
       datasources: {
@@ -13,4 +13,6 @@ export class PrismaService extends PrismaClient {
       },
     });
   }
+
+  // todo: implement DB management functions here
 }

@@ -10,50 +10,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("users")
-}
-
 model Role {
-  id         String       @id @default(uuid())
-  name       String       @unique
-  module     Module[]
-  userId     String
-  user       User         @relation(fields: [userId], references: [id])
-  isDeleted  Boolean      @default(false)
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  Permission Permission[]
-
-  @@map("roles")
-}
-
-model Module {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   name      String   @unique
-  roleId    String
-  role      Role     @relation(fields: [roleId], references: [id])
+  isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("modules")
+  User       User[]
+  Permission Permission[]
 }
 
 model Permission {
-  id        String   @id @default(uuid())
-  roleId    String
-  role      Role     @relation(fields: [roleId], references: [id])
+  id             Int      @id @default(autoincrement())
+  roleId         Int
+  moduleName     String
+  permissionType String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  Role Role @relation(fields: [roleId], references: [id])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
   name      String
+  email     String   @unique
+  password  String
+  roleId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("permissions")
+  Role Role @relation(fields: [roleId], references: [id])
 }
