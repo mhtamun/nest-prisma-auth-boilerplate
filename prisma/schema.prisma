@@ -17,8 +17,8 @@ model Role {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  User       User[]
-  Permission Permission[]
+  users       User[]
+  permissions Permission[]
 }
 
 model Permission {
@@ -26,10 +26,11 @@ model Permission {
   roleId         Int
   moduleName     String
   permissionType String
+  isDeleted      Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  Role Role @relation(fields: [roleId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
 }
 
 model User {
@@ -38,8 +39,9 @@ model User {
   email     String   @unique
   password  String
   roleId    Int
+  isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Role Role @relation(fields: [roleId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
 }

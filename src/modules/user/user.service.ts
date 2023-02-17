@@ -4,8 +4,9 @@ import { ErrorService } from 'src/util/error.service';
 import { DbService } from 'src/db/db.service';
 import { HashService } from 'src/util/hash.service';
 import {
-  CreateUserDto,
   SignInUserDto,
+  CreateUserDto,
+  UpdateUserDto,
 } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -19,51 +20,6 @@ export class UserService {
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
   ) {}
-
-  async create(dto: CreateUserDto) {
-    try {
-      const hashedPassword =
-        await this.hash.generateHash(
-          dto.password,
-        );
-
-      const user = await this.db.user.create({
-        data: {
-          ...dto,
-          password: hashedPassword,
-        },
-      });
-
-      delete user.password;
-
-      return {
-        success: true,
-        message: 'Success',
-        data: {
-          ...user,
-        },
-      };
-    } catch (error) {
-      const { name, message } =
-        this.error.handleDbError(error, {
-          unique:
-            'There is an account already registered with this email! Kindly please try another email.',
-        }) ?? {};
-
-      // console.debug({ name, message });
-
-      return {
-        success: false,
-        error:
-          !_.isUndefined(name) &&
-          !_.isNull(name) &&
-          !_.isUndefined(message) &&
-          !_.isNull(message)
-            ? { name, message }
-            : error,
-      };
-    }
-  }
 
   signToken(email: string): Promise<string> {
     const payload = {
@@ -80,8 +36,11 @@ export class UserService {
 
   async signIn(dto: SignInUserDto) {
     try {
-      const user = await this.db.user.findUnique({
-        where: { email: dto.email },
+      const user = await this.db.user.findFirst({
+        where: {
+          isDeleted: false,
+          email: dto.email,
+        },
       });
 
       const credentialNotCorrectError = {
@@ -107,6 +66,7 @@ export class UserService {
 
       delete user.password;
       delete user.roleId;
+      delete user.isDeleted;
       delete user.createdAt;
       delete user.updatedAt;
 
@@ -118,6 +78,118 @@ export class UserService {
           access_token: token,
           user,
         },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async create(dto: CreateUserDto) {
+    try {
+      const hashedPassword =
+        await this.hash.generateHash(
+          dto.password,
+        );
+
+      const user = await this.db.user.create({
+        data: {
+          ...dto,
+          password: hashedPassword,
+          isDeleted: false,
+        },
+      });
+
+      delete user.password;
+
+      return {
+        success: true,
+        data: {
+          ...user,
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async getAll() {
+    try {
+      const result = await this.db.user.findMany({
+        where: { isDeleted: false },
+      });
+
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async getById(id: number) {
+    try {
+      const result = await this.db.user.findFirst(
+        {
+          where: { isDeleted: false, id },
+        },
+      );
+
+      return {
+        success: true,
+        message: 'Success',
+        data: result,
+      };
+    } catch (error) {
+      console.error('error', error);
+
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async editById(id: number, dto: UpdateUserDto) {
+    try {
+      const result = await this.db.user.update({
+        where: { id },
+        data: {
+          ...dto,
+        },
+      });
+
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async removeById(id: number) {
+    try {
+      const result = await this.db.user.update({
+        where: { id },
+        data: { isDeleted: true },
+      });
+
+      return {
+        success: true,
+        data: result,
       };
     } catch (error) {
       return {

@@ -11,8 +11,16 @@ export const PermissionGuard = (
   moduleName: string,
   permissionType: string,
 ): Type<CanActivate> => {
+  // console.debug(
+  //   'I am now at PermissionGuard() function!',
+  // );
+
   class PermissionGuardMixin extends JwtGuard {
     async canActivate(context: ExecutionContext) {
+      // console.debug(
+      //   'I am invoked at canActivate() function!',
+      // );
+
       await super.canActivate(context);
 
       const request = context
@@ -20,12 +28,12 @@ export const PermissionGuard = (
         .getRequest();
 
       const user = request.user;
-      console.debug('user', user);
-      console.debug('moduleName', moduleName);
-      console.debug(
-        'permissionType',
-        permissionType,
-      );
+      // console.debug('user', user);
+      // console.debug('moduleName', moduleName);
+      // console.debug(
+      //   'permissionType',
+      //   permissionType,
+      // );
 
       // todo: implement check permissions
 

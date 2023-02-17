@@ -6,6 +6,16 @@ import {
   IsPositive,
 } from 'class-validator';
 
+export class SignInUserDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
@@ -24,12 +34,16 @@ export class CreateUserDto {
   roleId: number;
 }
 
-export class SignInUserDto {
+export class UpdateUserDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
-  @IsString()
-  @IsNotEmpty()
-  password: string;
+  @IsNumber()
+  @IsPositive()
+  roleId: number;
 }

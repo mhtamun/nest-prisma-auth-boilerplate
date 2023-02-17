@@ -7,42 +7,26 @@ import {
   HttpStatus,
   Get,
   Param,
-  Put,
   Delete,
+  Put,
 } from '@nestjs/common';
-import { PermissionGuard } from '../auth/guard';
-import { UserService } from './user.service';
+import { PermissionGuard } from '../../auth/guard';
+import { RoleService } from './role.service';
 import { ResponseService } from 'src/util/response.service';
-import {
-  SignInUserDto,
-  CreateUserDto,
-  UpdateUserDto,
-} from './dto';
+import { CreateRoleDto } from '../dto';
 
-@Controller('users')
-export class UserController {
+@Controller('roles')
+export class RoleController {
   constructor(
-    private readonly userService: UserService,
+    private readonly roleService: RoleService,
     private readonly responseService: ResponseService,
   ) {}
 
-  @HttpCode(HttpStatus.OK)
-  @Post('sign-in')
-  async signIn(@Body() dto: SignInUserDto) {
-    const result = await this.userService.signIn(
-      dto,
-    );
-
-    return this.responseService.handleResponse(
-      result,
-    );
-  }
-
-  @UseGuards(PermissionGuard('user', 'create'))
+  @UseGuards(PermissionGuard('role', 'create'))
   @HttpCode(HttpStatus.OK)
   @Post('/')
-  async create(@Body() dto: CreateUserDto) {
-    const result = await this.userService.create(
+  async create(@Body() dto: CreateRoleDto) {
+    const result = await this.roleService.create(
       dto,
     );
 
@@ -51,12 +35,12 @@ export class UserController {
     );
   }
 
-  @UseGuards(PermissionGuard('user', 'read'))
+  @UseGuards(PermissionGuard('role', 'read'))
   @HttpCode(HttpStatus.OK)
   @Get('/')
   async readAll() {
     const result =
-      await this.userService.getAll();
+      await this.roleService.getAll();
 
     return this.responseService.handleResponse(
       result,
@@ -67,7 +51,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
   async readById(@Param('id') id) {
-    const result = await this.userService.getById(
+    const result = await this.roleService.getById(
       parseInt(id),
     );
 
@@ -81,10 +65,10 @@ export class UserController {
   @Put('/:id')
   async updateById(
     @Param('id') id,
-    @Body() dto: UpdateUserDto,
+    @Body() dto: CreateRoleDto,
   ) {
     const result =
-      await this.userService.editById(
+      await this.roleService.editById(
         parseInt(id),
         dto,
       );
@@ -99,7 +83,7 @@ export class UserController {
   @Delete('/:id')
   async deleteById(@Param('id') id) {
     const result =
-      await this.userService.removeById(
+      await this.roleService.removeById(
         parseInt(id),
       );
 

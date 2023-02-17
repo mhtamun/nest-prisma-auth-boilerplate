@@ -30,6 +30,9 @@ export class JwtStrategy extends PassportStrategy(
   async validate(payload: {
     email: string;
   }): Promise<any> {
+    // console.debug(
+    //   'I am now at validate() function!',
+    // );
     // console.debug('payload', payload);
 
     const user = await this.db.user.findUnique({

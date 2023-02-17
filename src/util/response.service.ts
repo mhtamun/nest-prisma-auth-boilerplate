@@ -4,6 +4,8 @@ import {
   Injectable,
 } from '@nestjs/common';
 import * as _ from 'lodash';
+import { ErrorService } from './error.service';
+const errorService = new ErrorService();
 
 interface Result {
   success: boolean;
@@ -27,7 +29,9 @@ export class ResponseService {
       !_.isUndefined(error) &&
       !_.isNull(error) &&
       !_.isUndefined(error.name) &&
-      !_.isNull(error.name)
+      !_.isNull(error.name) &&
+      !_.isUndefined(error.message) &&
+      !_.isNull(error.message)
     ) {
       if (error.name === 'badRequest') {
         throw new HttpException(
@@ -42,6 +46,11 @@ export class ResponseService {
           HttpStatus.UNAUTHORIZED,
         );
       }
+
+      throw new HttpException(
+        error.message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     throw new HttpException(
@@ -52,9 +61,24 @@ export class ResponseService {
 
   handleResponse(result: Result) {
     if (!result.success) {
+      console.error('error', result.error);
+
+      const { name, message } =
+        errorService.handleDbError(result.error, {
+          unique:
+            'Unique validation error occurred!',
+        }) ?? {};
+
+      result.error =
+        !_.isUndefined(name) &&
+        !_.isNull(name) &&
+        !_.isUndefined(message) &&
+        !_.isNull(message)
+          ? { name, message }
+          : result.error;
+
       return this.getFailureFrame(
-        result.message ??
-          'Something went wrong, please have patience!',
+        result.message ?? 'Something went wrong!',
         result.error,
       );
     } else {
