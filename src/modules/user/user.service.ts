@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
-import { ErrorService } from 'src/util/error.service';
 import { DbService } from 'src/db/db.service';
 import { HashService } from 'src/util/hash.service';
 import {
@@ -14,7 +13,6 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class UserService {
   constructor(
-    private readonly error: ErrorService,
     private readonly db: DbService,
     private readonly hash: HashService,
     private readonly jwt: JwtService,
@@ -26,11 +24,9 @@ export class UserService {
       email,
     };
 
-    const secret = this.config.get('JWT_SECRET');
-
     return this.jwt.signAsync(payload, {
       expiresIn: '10080m',
-      secret,
+      secret: this.config.get('JWT_SECRET'),
     });
   }
 

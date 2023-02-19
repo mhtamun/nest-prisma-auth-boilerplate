@@ -30,25 +30,52 @@ export class JwtStrategy extends PassportStrategy(
   async validate(payload: {
     email: string;
   }): Promise<any> {
-    // console.debug(
-    //   'I am now at validate() function!',
-    // );
-    // console.debug('payload', payload);
+    try {
+      const user = await this.db.user.findFirst({
+        where: {
+          isDeleted: false,
+          email: payload.email,
+        },
+      });
 
-    const user = await this.db.user.findUnique({
-      where: {
-        email: payload.email,
-      },
-    });
+      if (!user) {
+        return false;
+      }
 
-    if (!user) {
-      throw new UnauthorizedException();
+      const role = await this.db.role.findFirst({
+        where: {
+          isDeleted: false,
+          id: user.roleId,
+        },
+      });
+
+      if (!role) {
+        return false;
+      }
+
+      const permissions =
+        await this.db.permission.findMany({
+          where: { roleId: user.roleId },
+        });
+
+      if (
+        !permissions ||
+        permissions.length === 0
+      ) {
+        return false;
+      }
+
+      delete user.password;
+
+      return {
+        about: user,
+        role,
+        permissions,
+      };
+    } catch (error) {
+      console.error('error', error);
+
+      return false;
     }
-
-    delete user.password;
-
-    // console.debug('user', user);
-
-    return user;
   }
 }

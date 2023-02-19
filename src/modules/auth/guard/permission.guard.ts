@@ -6,39 +6,41 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtGuard } from './jwt.guard';
+import * as _ from 'lodash';
 
 export const PermissionGuard = (
   moduleName: string,
   permissionType: string,
 ): Type<CanActivate> => {
-  // console.debug(
-  //   'I am now at PermissionGuard() function!',
-  // );
-
   class PermissionGuardMixin extends JwtGuard {
-    async canActivate(context: ExecutionContext) {
-      // console.debug(
-      //   'I am invoked at canActivate() function!',
-      // );
+    constructor() {
+      super();
+    }
 
+    async canActivate(context: ExecutionContext) {
       await super.canActivate(context);
 
       const request = context
         .switchToHttp()
         .getRequest();
 
-      const user = request.user;
-      // console.debug('user', user);
-      // console.debug('moduleName', moduleName);
-      // console.debug(
-      //   'permissionType',
-      //   permissionType,
-      // );
+      const { permissions } = request.user;
 
-      // todo: implement check permissions
-
-      if (!user)
-        throw new UnauthorizedException();
+      if (
+        !_.some(permissions, (permission) => {
+          return (
+            _.isEqual(
+              permission.moduleName,
+              moduleName,
+            ) &&
+            _.isEqual(
+              permission.permissionType,
+              permissionType,
+            )
+          );
+        })
+      )
+        return false;
 
       return true;
     }

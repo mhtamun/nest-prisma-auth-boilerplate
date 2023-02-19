@@ -7,49 +7,34 @@ import {
   HttpStatus,
   Get,
   Param,
-  Put,
   Delete,
+  Put,
 } from '@nestjs/common';
-import { PermissionGuard } from '../auth/guard';
-import { UserService } from './user.service';
+import { PermissionGuard } from '../../auth/guard';
+import { PermissionService } from './permission.service';
 import { ResponseService } from 'src/util/response.service';
 import {
-  SignInUserDto,
-  CreateUserDto,
-  UpdateUserDto,
-} from './dto';
-import { GetUser } from '../auth/decorator';
+  CreatePermissionDto,
+  UpdatePermissionDto,
+} from '../dto';
 
-const moduleName = 'user';
+const moduleName = 'role-permission';
 
-@Controller('users')
-export class UserController {
+@Controller('permissions')
+export class PermissionController {
   constructor(
-    private readonly userService: UserService,
+    private readonly permissionService: PermissionService,
     private readonly responseService: ResponseService,
   ) {}
-
-  @HttpCode(HttpStatus.OK)
-  @Post('sign-in')
-  async signIn(@Body() dto: SignInUserDto) {
-    const result = await this.userService.signIn(
-      dto,
-    );
-
-    return this.responseService.handleResponse(
-      result,
-    );
-  }
 
   @UseGuards(
     PermissionGuard(moduleName, 'create'),
   )
   @HttpCode(HttpStatus.OK)
   @Post('')
-  async create(@Body() dto: CreateUserDto) {
-    const result = await this.userService.create(
-      dto,
-    );
+  async create(@Body() dto: CreatePermissionDto) {
+    const result =
+      await this.permissionService.create(dto);
 
     return this.responseService.handleResponse(
       result,
@@ -61,7 +46,23 @@ export class UserController {
   @Get('')
   async readAll() {
     const result =
-      await this.userService.getAll();
+      await this.permissionService.getAll(null);
+
+    return this.responseService.handleResponse(
+      result,
+    );
+  }
+
+  @UseGuards(PermissionGuard(moduleName, 'read'))
+  @HttpCode(HttpStatus.OK)
+  @Get('roles/:roleId/permissions')
+  async readAllByRole(
+    @Param('roleId') roleId: string,
+  ) {
+    const result =
+      await this.permissionService.getAll(
+        parseInt(roleId),
+      );
 
     return this.responseService.handleResponse(
       result,
@@ -72,23 +73,14 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @Get(':id')
   async readById(@Param('id') id) {
-    const result = await this.userService.getById(
-      parseInt(id),
-    );
+    const result =
+      await this.permissionService.getById(
+        parseInt(id),
+      );
 
     return this.responseService.handleResponse(
       result,
     );
-  }
-
-  @UseGuards(PermissionGuard(moduleName, 'read'))
-  @HttpCode(HttpStatus.OK)
-  @Get('profile/get')
-  async readProfile(@GetUser() user: any) {
-    return this.responseService.handleResponse({
-      success: true,
-      data: user,
-    });
   }
 
   @UseGuards(
@@ -98,10 +90,10 @@ export class UserController {
   @Put(':id')
   async updateById(
     @Param('id') id,
-    @Body() dto: UpdateUserDto,
+    @Body() dto: UpdatePermissionDto,
   ) {
     const result =
-      await this.userService.editById(
+      await this.permissionService.editById(
         parseInt(id),
         dto,
       );
@@ -118,7 +110,7 @@ export class UserController {
   @Delete(':id')
   async deleteById(@Param('id') id) {
     const result =
-      await this.userService.removeById(
+      await this.permissionService.removeById(
         parseInt(id),
       );
 

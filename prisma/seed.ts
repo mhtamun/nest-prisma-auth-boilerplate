@@ -10,7 +10,7 @@ async function main() {
     },
   });
 
-  console.debug({ role });
+  // console.debug({ role });
 
   await prisma.permission.create({
     data: {
@@ -40,6 +40,38 @@ async function main() {
     data: {
       roleId: role.id,
       moduleName: 'user',
+      permissionType: 'delete',
+    },
+  });
+
+  await prisma.permission.create({
+    data: {
+      roleId: role.id,
+      moduleName: 'role-permission',
+      permissionType: 'create',
+    },
+  });
+
+  await prisma.permission.create({
+    data: {
+      roleId: role.id,
+      moduleName: 'role-permission',
+      permissionType: 'read',
+    },
+  });
+
+  await prisma.permission.create({
+    data: {
+      roleId: role.id,
+      moduleName: 'role-permission',
+      permissionType: 'update',
+    },
+  });
+
+  await prisma.permission.create({
+    data: {
+      roleId: role.id,
+      moduleName: 'role-permission',
       permissionType: 'delete',
     },
   });

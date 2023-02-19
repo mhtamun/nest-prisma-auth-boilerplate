@@ -15,6 +15,8 @@ import { RoleService } from './role.service';
 import { ResponseService } from 'src/util/response.service';
 import { CreateRoleDto } from '../dto';
 
+const moduleName = 'role-permission';
+
 @Controller('roles')
 export class RoleController {
   constructor(
@@ -22,9 +24,11 @@ export class RoleController {
     private readonly responseService: ResponseService,
   ) {}
 
-  @UseGuards(PermissionGuard('role', 'create'))
+  @UseGuards(
+    PermissionGuard(moduleName, 'create'),
+  )
   @HttpCode(HttpStatus.OK)
-  @Post('/')
+  @Post('')
   async create(@Body() dto: CreateRoleDto) {
     const result = await this.roleService.create(
       dto,
@@ -35,9 +39,9 @@ export class RoleController {
     );
   }
 
-  @UseGuards(PermissionGuard('role', 'read'))
+  @UseGuards(PermissionGuard(moduleName, 'read'))
   @HttpCode(HttpStatus.OK)
-  @Get('/')
+  @Get('')
   async readAll() {
     const result =
       await this.roleService.getAll();
@@ -47,9 +51,9 @@ export class RoleController {
     );
   }
 
-  @UseGuards(PermissionGuard('user', 'read'))
+  @UseGuards(PermissionGuard(moduleName, 'read'))
   @HttpCode(HttpStatus.OK)
-  @Get('/:id')
+  @Get(':id')
   async readById(@Param('id') id) {
     const result = await this.roleService.getById(
       parseInt(id),
@@ -60,9 +64,11 @@ export class RoleController {
     );
   }
 
-  @UseGuards(PermissionGuard('user', 'update'))
+  @UseGuards(
+    PermissionGuard(moduleName, 'update'),
+  )
   @HttpCode(HttpStatus.OK)
-  @Put('/:id')
+  @Put(':id')
   async updateById(
     @Param('id') id,
     @Body() dto: CreateRoleDto,
@@ -78,9 +84,11 @@ export class RoleController {
     );
   }
 
-  @UseGuards(PermissionGuard('user', 'delete'))
+  @UseGuards(
+    PermissionGuard(moduleName, 'delete'),
+  )
   @HttpCode(HttpStatus.OK)
-  @Delete('/:id')
+  @Delete(':id')
   async deleteById(@Param('id') id) {
     const result =
       await this.roleService.removeById(

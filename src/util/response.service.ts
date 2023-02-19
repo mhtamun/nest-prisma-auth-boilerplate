@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import * as _ from 'lodash';
 import { ErrorService } from './error.service';
-const errorService = new ErrorService();
 
 interface Result {
   success: boolean;
@@ -16,6 +15,10 @@ interface Result {
 
 @Injectable()
 export class ResponseService {
+  constructor(
+    private readonly errorService: ErrorService,
+  ) {}
+
   getSuccessFrame(message: string, data: any) {
     return {
       statusCode: 200,
@@ -64,10 +67,13 @@ export class ResponseService {
       console.error('error', result.error);
 
       const { name, message } =
-        errorService.handleDbError(result.error, {
-          unique:
-            'Unique validation error occurred!',
-        }) ?? {};
+        this.errorService.handleDbError(
+          result.error,
+          {
+            unique:
+              'Unique validation error occurred!',
+          },
+        ) ?? {};
 
       result.error =
         !_.isUndefined(name) &&
