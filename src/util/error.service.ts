@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
-export interface DbErrorMessage {
+interface DbErrorMessage {
   unique?: string;
 }
 

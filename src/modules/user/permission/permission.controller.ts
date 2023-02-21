@@ -13,6 +13,7 @@ import {
 import { PermissionGuard } from '../../auth/guard';
 import { PermissionService } from './permission.service';
 import { ResponseService } from 'src/util/response.service';
+import { ConstantService } from 'src/util/constant.service';
 import {
   CreatePermissionDto,
   UpdatePermissionDto,
@@ -20,18 +21,19 @@ import {
 
 const moduleName = 'role-permission';
 
-@Controller('permissions')
+@Controller()
 export class PermissionController {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly responseService: ResponseService,
+    private readonly constant: ConstantService,
   ) {}
 
   @UseGuards(
     PermissionGuard(moduleName, 'create'),
   )
   @HttpCode(HttpStatus.OK)
-  @Post('')
+  @Post('permissions')
   async create(@Body() dto: CreatePermissionDto) {
     const result =
       await this.permissionService.create(dto);
@@ -43,7 +45,31 @@ export class PermissionController {
 
   @UseGuards(PermissionGuard(moduleName, 'read'))
   @HttpCode(HttpStatus.OK)
-  @Get('')
+  @Get('permissions/modules/names')
+  async readAllModuleNames() {
+    const result =
+      await this.permissionService.getAllModuleNames();
+
+    return this.responseService.handleResponse(
+      result,
+    );
+  }
+
+  @UseGuards(PermissionGuard(moduleName, 'read'))
+  @HttpCode(HttpStatus.OK)
+  @Get('permissions/types/names')
+  async readAllPermissionTypes() {
+    const result =
+      await this.permissionService.getAllPermissionTypes();
+
+    return this.responseService.handleResponse(
+      result,
+    );
+  }
+
+  @UseGuards(PermissionGuard(moduleName, 'read'))
+  @HttpCode(HttpStatus.OK)
+  @Get('permissions')
   async readAll() {
     const result =
       await this.permissionService.getAll(null);
@@ -71,7 +97,7 @@ export class PermissionController {
 
   @UseGuards(PermissionGuard(moduleName, 'read'))
   @HttpCode(HttpStatus.OK)
-  @Get(':id')
+  @Get('permissions/:id')
   async readById(@Param('id') id) {
     const result =
       await this.permissionService.getById(
@@ -87,7 +113,7 @@ export class PermissionController {
     PermissionGuard(moduleName, 'update'),
   )
   @HttpCode(HttpStatus.OK)
-  @Put(':id')
+  @Put('permissions/:id')
   async updateById(
     @Param('id') id,
     @Body() dto: UpdatePermissionDto,
@@ -107,7 +133,7 @@ export class PermissionController {
     PermissionGuard(moduleName, 'delete'),
   )
   @HttpCode(HttpStatus.OK)
-  @Delete(':id')
+  @Delete('permissions/:id')
   async deleteById(@Param('id') id) {
     const result =
       await this.permissionService.removeById(

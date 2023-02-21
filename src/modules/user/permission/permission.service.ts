@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
 import { DbService } from 'src/db/db.service';
+import { ConstantService } from 'src/util/constant.service';
 import {
   CreatePermissionDto,
   UpdatePermissionDto,
@@ -8,7 +9,10 @@ import {
 
 @Injectable()
 export class PermissionService {
-  constructor(private readonly db: DbService) {}
+  constructor(
+    private readonly db: DbService,
+    private readonly constant: ConstantService,
+  ) {}
 
   async create(dto: CreatePermissionDto) {
     try {
@@ -25,6 +29,40 @@ export class PermissionService {
         data: {
           ...user,
         },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async getAllModuleNames() {
+    try {
+      const result =
+        this.constant.getModuleNameList();
+
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async getAllPermissionTypes() {
+    try {
+      const result =
+        this.constant.getPermissionTypeList();
+
+      return {
+        success: true,
+        data: result,
       };
     } catch (error) {
       return {
