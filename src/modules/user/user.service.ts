@@ -1,4 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { HashService } from 'src/util/hash.service';
@@ -6,12 +9,32 @@ import BaseService from '../base.service';
 
 @Injectable()
 export class UserService extends BaseService {
-  constructor(
-    private readonly hash: HashService,
-    private readonly jwt: JwtService,
-    private readonly config: ConfigService,
-  ) {
+  constructor() {
     super('user');
+  }
+
+  @Inject()
+  private readonly hash: HashService;
+  @Inject()
+  private readonly jwt: JwtService;
+  @Inject()
+  private readonly config: ConfigService;
+
+  async testMethod() {
+    const hashedPassword =
+      this.hash.generateHash('123456');
+
+    console.debug(
+      'hashedPassword',
+      hashedPassword,
+    );
+
+    const JWT_SECRET =
+      this.config.get('JWT_SECRET');
+
+    console.debug('JWT_SECRET', JWT_SECRET);
+
+    return { success: true };
   }
 
   // signToken(email: string): Promise<string> {

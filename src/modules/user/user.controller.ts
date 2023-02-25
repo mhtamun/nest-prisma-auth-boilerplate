@@ -16,6 +16,17 @@ export class UserController {
     private readonly responseService: ResponseService,
   ) {}
 
+  @HttpCode(HttpStatus.OK)
+  @Get('test')
+  async test() {
+    const result =
+      await this.userService.testMethod();
+
+    return this.responseService.handleResponse(
+      result,
+    );
+  }
+
   // @HttpCode(HttpStatus.OK)
   // @Post('sign-in')
   // async signIn(@Body() dto: SignInUserDto) {
