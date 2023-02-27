@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Param,
   Post,
   Put,
@@ -24,10 +25,11 @@ const moduleName = 'user';
 
 @Controller('users')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly responseService: ResponseService,
-  ) {}
+  @Inject()
+  private readonly userService: UserService;
+
+  @Inject()
+  private readonly responseService: ResponseService;
 
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')

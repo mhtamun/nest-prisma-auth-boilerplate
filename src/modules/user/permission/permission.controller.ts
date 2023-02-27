@@ -9,6 +9,7 @@ import {
   Param,
   Delete,
   Put,
+  Inject,
 } from '@nestjs/common';
 import { PermissionGuard } from '../../auth/guard';
 import { PermissionService } from './permission.service';
@@ -23,11 +24,14 @@ const moduleName = 'role-permission';
 
 @Controller()
 export class PermissionController {
-  constructor(
-    private readonly permissionService: PermissionService,
-    private readonly responseService: ResponseService,
-    private readonly constant: ConstantService,
-  ) {}
+  @Inject()
+  private readonly permissionService: PermissionService;
+
+  @Inject()
+  private readonly responseService: ResponseService;
+
+  @Inject()
+  private readonly constant: ConstantService;
 
   @UseGuards(
     PermissionGuard(moduleName, 'create'),

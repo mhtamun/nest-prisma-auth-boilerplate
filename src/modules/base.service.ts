@@ -17,17 +17,23 @@ export default class BaseService {
     });
   }
 
-  async readMany(where?: any) {
+  async readMany(where?: any, include?: any) {
     return await this.db[this.model].findMany({
       where: !where ? undefined : { ...where },
+      include: !include
+        ? undefined
+        : { ...include },
     });
   }
 
-  async readFirst(where: any) {
+  async readFirst(where: any, include?: any) {
     if (!where) return null;
 
     return await this.db[this.model].findFirst({
       where: { ...where },
+      include: !include
+        ? undefined
+        : { ...include },
     });
   }
 

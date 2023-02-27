@@ -14,16 +14,18 @@ import {
 
 @Injectable()
 export class UserService extends BaseService {
+  @Inject()
+  private readonly hash: HashService;
+
+  @Inject()
+  private readonly jwt: JwtService;
+
+  @Inject()
+  private readonly config: ConfigService;
+
   constructor() {
     super('user');
   }
-
-  @Inject()
-  private readonly hash: HashService;
-  @Inject()
-  private readonly jwt: JwtService;
-  @Inject()
-  private readonly config: ConfigService;
 
   signToken(email: string): Promise<string> {
     const payload = {
