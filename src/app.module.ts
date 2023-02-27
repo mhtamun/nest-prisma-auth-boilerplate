@@ -1,19 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { BookmarkModule } from './bookmark/bookmark.module';
-import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { DbModule } from './db/db.module';
+import { UtilityModule } from './util/utility.module';
+// Modules
+import { AuthModule } from 'src/modules/auth/auth.module';
+import { UserModule } from 'src/modules/user/user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    DbModule,
+    UtilityModule,
     AuthModule,
     UserModule,
-    BookmarkModule,
-    PrismaModule,
   ],
 })
 export class AppModule {}
