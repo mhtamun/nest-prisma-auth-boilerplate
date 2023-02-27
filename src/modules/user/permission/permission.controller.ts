@@ -40,7 +40,7 @@ export class PermissionController {
   @Post('permissions')
   async create(@Body() dto: CreatePermissionDto) {
     const result =
-      await this.permissionService.create(dto);
+      await this.permissionService.save(dto);
 
     return this.responseService.handleResponse(
       result,

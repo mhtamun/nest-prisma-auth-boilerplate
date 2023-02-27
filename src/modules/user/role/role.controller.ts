@@ -32,7 +32,7 @@ export class RoleController {
   @HttpCode(HttpStatus.OK)
   @Post('')
   async create(@Body() dto: CreateRoleDto) {
-    const result = await this.roleService.create(
+    const result = await this.roleService.save(
       dto,
     );
 

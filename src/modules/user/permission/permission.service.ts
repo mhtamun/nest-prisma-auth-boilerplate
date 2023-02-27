@@ -19,7 +19,7 @@ export class PermissionService extends BaseService {
     super('permission');
   }
 
-  async create(dto: CreatePermissionDto) {
+  async save(dto: CreatePermissionDto) {
     try {
       const user = await super.create({
         ...dto,

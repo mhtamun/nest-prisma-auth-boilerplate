@@ -9,7 +9,7 @@ export class RoleService extends BaseService {
     super('role');
   }
 
-  async create(dto: CreateRoleDto) {
+  async save(dto: CreateRoleDto) {
     try {
       const user = await super.create({
         ...dto,
