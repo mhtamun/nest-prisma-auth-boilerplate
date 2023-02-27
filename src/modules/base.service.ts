@@ -9,15 +9,44 @@ export default class BaseService {
     this.model = model;
   }
 
-  async findMany(where?: any) {
+  async create(data: any) {
+    if (!data) return null;
+
+    return await this.db[this.model].create({
+      data,
+    });
+  }
+
+  async readMany(where?: any) {
     return await this.db[this.model].findMany({
       where: !where ? undefined : { ...where },
     });
   }
 
-  async findFirst(where: any) {
+  async readFirst(where: any) {
+    if (!where) return null;
+
     return await this.db[this.model].findFirst({
       where: { ...where },
+    });
+  }
+
+  async update(where: any, data: any) {
+    if (!where) return null;
+
+    if (!data) return null;
+
+    return await this.db[this.model].update({
+      where,
+      data,
+    });
+  }
+
+  async delete(where: any) {
+    if (!where) return null;
+
+    return await this.db[this.model].delete({
+      where,
     });
   }
 }
