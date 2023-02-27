@@ -4,6 +4,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { Prisma } from '@prisma/client';
 import { HashService } from 'src/util/hash.service';
 import BaseService from '../base.service';
 import {
@@ -40,46 +41,53 @@ export class UserService extends BaseService {
 
   async signIn(dto: SignInUserDto) {
     try {
-      const user = await super.readFirst({
-        isDeleted: false,
-        email: dto.email,
-      });
+      const data = await super.transact(
+        async (tx: Prisma.TransactionClient) => {
+          const user = await super.readFirst(tx, {
+            isDeleted: false,
+            email: dto.email,
+          });
 
-      const credentialNotCorrectError = {
-        name: 'unauthorized',
-        message:
-          'Unfortunately, you entered credentials are incorrect!',
-      };
+          const credentialNotCorrectError = {
+            name: 'unauthorized',
+            message:
+              'Unfortunately, you entered credentials are incorrect!',
+          };
 
-      if (!user) throw credentialNotCorrectError;
+          if (!user)
+            throw credentialNotCorrectError;
 
-      const isPasswordMatched =
-        await this.hash.matchHash(
-          dto.password,
-          user.password,
-        );
+          const isPasswordMatched =
+            await this.hash.matchHash(
+              dto.password,
+              user.password,
+            );
 
-      if (!isPasswordMatched)
-        throw credentialNotCorrectError;
+          if (!isPasswordMatched)
+            throw credentialNotCorrectError;
 
-      const token = await this.signToken(
-        user.email,
+          const token = await this.signToken(
+            user.email,
+          );
+
+          delete user.password;
+          delete user.roleId;
+          delete user.isDeleted;
+          delete user.createdAt;
+          delete user.updatedAt;
+
+          return {
+            access_type: 'Bearer',
+            access_token: token,
+            user,
+          };
+        },
       );
-
-      delete user.password;
-      delete user.roleId;
-      delete user.isDeleted;
-      delete user.createdAt;
-      delete user.updatedAt;
 
       return {
         success: true,
-        message: `Hi ${user.name}, you are successfully signed in.`,
-        data: {
-          access_type: 'Bearer',
-          access_token: token,
-          user,
-        },
+        message: `Hi, you are successfully signed in.`,
+        data,
       };
     } catch (error) {
       return {
@@ -96,19 +104,23 @@ export class UserService extends BaseService {
           dto.password,
         );
 
-      const user = await super.create({
-        ...dto,
-        password: hashedPassword,
-        isDeleted: false,
-      });
+      const data = await super.transact(
+        async (tx) => {
+          const user = await super.create(tx, {
+            ...dto,
+            password: hashedPassword,
+            isDeleted: false,
+          });
 
-      delete user.password;
+          delete user.password;
+
+          return user;
+        },
+      );
 
       return {
         success: true,
-        data: {
-          ...user,
-        },
+        data,
       };
     } catch (error) {
       return {
@@ -120,13 +132,17 @@ export class UserService extends BaseService {
 
   async getAll() {
     try {
-      const result = await super.readMany({
-        isDeleted: false,
-      });
+      const data = await super.transact(
+        async (tx: Prisma.TransactionClient) => {
+          return await super.readMany(tx, {
+            isDeleted: false,
+          });
+        },
+      );
 
       return {
         success: true,
-        data: result,
+        data,
       };
     } catch (error) {
       return {
@@ -138,19 +154,20 @@ export class UserService extends BaseService {
 
   async getById(id: number) {
     try {
-      const result = await super.readFirst({
-        id,
-        isDeleted: false,
-      });
+      const data = await super.transact(
+        async (tx: Prisma.TransactionClient) => {
+          return await super.readFirst(tx, {
+            isDeleted: false,
+            id,
+          });
+        },
+      );
 
       return {
         success: true,
-        message: 'Success',
-        data: result,
+        data,
       };
     } catch (error) {
-      console.error('error', error);
-
       return {
         success: false,
         error,
@@ -160,16 +177,21 @@ export class UserService extends BaseService {
 
   async editById(id: number, dto: UpdateUserDto) {
     try {
-      const result = await super.update(
-        { id },
-        {
-          ...dto,
+      const data = await super.transact(
+        async (tx: Prisma.TransactionClient) => {
+          return await super.update(
+            tx,
+            { id },
+            {
+              ...dto,
+            },
+          );
         },
       );
 
       return {
         success: true,
-        data: result,
+        data,
       };
     } catch (error) {
       return {
@@ -181,14 +203,19 @@ export class UserService extends BaseService {
 
   async removeById(id: number) {
     try {
-      const result = await super.update(
-        { id },
-        { isDeleted: true },
+      const data = await super.transact(
+        async (tx: Prisma.TransactionClient) => {
+          return await super.update(
+            tx,
+            { id },
+            { isDeleted: true },
+          );
+        },
       );
 
       return {
         success: true,
-        data: result,
+        data,
       };
     } catch (error) {
       return {

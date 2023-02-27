@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import * as _ from 'lodash';
 import BaseService from 'src/modules/base.service';
 import { CreateRoleDto } from '../dto';
@@ -11,16 +12,18 @@ export class RoleService extends BaseService {
 
   async save(dto: CreateRoleDto) {
     try {
-      const user = await super.create({
-        ...dto,
-        isDeleted: false,
-      });
+      const data = await super.transact(
+        async (tx: Prisma.TransactionClient) => {
+          return await super.create(tx, {
+            ...dto,
+            isDeleted: false,
+          });
+        },
+      );
 
       return {
         success: true,
-        data: {
-          ...user,
-        },
+        data,
       };
     } catch (error) {
       return {
@@ -32,16 +35,21 @@ export class RoleService extends BaseService {
 
   async getAll() {
     try {
-      const result = await super.readMany(
-        { isDeleted: false },
-        {
-          permissions: true,
+      const data = await super.transact(
+        async (tx: Prisma.TransactionClient) => {
+          return await super.readMany(
+            tx,
+            { isDeleted: false },
+            {
+              permissions: true,
+            },
+          );
         },
       );
 
       return {
         success: true,
-        data: result,
+        data,
       };
     } catch (error) {
       return {
@@ -53,16 +61,21 @@ export class RoleService extends BaseService {
 
   async getById(id: number) {
     try {
-      const result = await super.readFirst(
-        { isDeleted: false, id },
-        {
-          permissions: true,
+      const data = await super.transact(
+        async (tx: Prisma.TransactionClient) => {
+          return await super.readFirst(
+            tx,
+            { isDeleted: false, id },
+            {
+              permissions: true,
+            },
+          );
         },
       );
 
       return {
         success: true,
-        data: result,
+        data,
       };
     } catch (error) {
       return {
@@ -74,16 +87,21 @@ export class RoleService extends BaseService {
 
   async editById(id: number, dto: CreateRoleDto) {
     try {
-      const result = await super.update(
-        { id },
-        {
-          ...dto,
+      const data = await super.transact(
+        async (tx: Prisma.TransactionClient) => {
+          return await super.update(
+            tx,
+            { id },
+            {
+              ...dto,
+            },
+          );
         },
       );
 
       return {
         success: true,
-        data: result,
+        data,
       };
     } catch (error) {
       return {
@@ -95,14 +113,19 @@ export class RoleService extends BaseService {
 
   async removeById(id: number) {
     try {
-      const result = await super.update(
-        { id },
-        { isDeleted: true },
+      const data = await super.transact(
+        async (tx: Prisma.TransactionClient) => {
+          return await super.update(
+            tx,
+            { id },
+            { isDeleted: true },
+          );
+        },
       );
 
       return {
         success: true,
-        data: result,
+        data,
       };
     } catch (error) {
       return {
