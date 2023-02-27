@@ -1,33 +1,35 @@
 import {
-  UseGuards,
-  Controller,
   Body,
-  Post,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
-  Get,
+  Inject,
   Param,
+  Post,
   Put,
-  Delete,
+  UseGuards,
 } from '@nestjs/common';
-import { PermissionGuard } from '../auth/guard';
-import { UserService } from './user.service';
 import { ResponseService } from 'src/util/response.service';
+import { GetUser } from '../auth/decorator';
+import { PermissionGuard } from '../auth/guard';
 import {
   SignInUserDto,
   CreateUserDto,
   UpdateUserDto,
 } from './dto';
-import { GetUser } from '../auth/decorator';
+import { UserService } from './user.service';
 
 const moduleName = 'user';
 
 @Controller('users')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly responseService: ResponseService,
-  ) {}
+  @Inject()
+  private readonly userService: UserService;
+
+  @Inject()
+  private readonly responseService: ResponseService;
 
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
@@ -47,7 +49,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @Post('')
   async create(@Body() dto: CreateUserDto) {
-    const result = await this.userService.create(
+    const result = await this.userService.save(
       dto,
     );
 

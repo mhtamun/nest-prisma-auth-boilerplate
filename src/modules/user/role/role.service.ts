@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
-import { DbService } from 'src/db/db.service';
+import BaseService from 'src/modules/base.service';
 import { CreateRoleDto } from '../dto';
 
 @Injectable()
-export class RoleService {
-  constructor(private readonly db: DbService) {}
+export class RoleService extends BaseService {
+  constructor() {
+    super('role');
+  }
 
-  async create(dto: CreateRoleDto) {
+  async save(dto: CreateRoleDto) {
     try {
-      const user = await this.db.role.create({
-        data: {
-          ...dto,
-          isDeleted: false,
-        },
+      const user = await super.create({
+        ...dto,
+        isDeleted: false,
       });
 
       return {
@@ -32,12 +32,12 @@ export class RoleService {
 
   async getAll() {
     try {
-      const result = await this.db.role.findMany({
-        where: { isDeleted: false },
-        include: {
+      const result = await super.readMany(
+        { isDeleted: false },
+        {
           permissions: true,
         },
-      });
+      );
 
       return {
         success: true,
@@ -53,12 +53,10 @@ export class RoleService {
 
   async getById(id: number) {
     try {
-      const result = await this.db.role.findFirst(
+      const result = await super.readFirst(
+        { isDeleted: false, id },
         {
-          where: { isDeleted: false, id },
-          include: {
-            permissions: true,
-          },
+          permissions: true,
         },
       );
 
@@ -76,12 +74,12 @@ export class RoleService {
 
   async editById(id: number, dto: CreateRoleDto) {
     try {
-      const result = await this.db.role.update({
-        where: { id },
-        data: {
+      const result = await super.update(
+        { id },
+        {
           ...dto,
         },
-      });
+      );
 
       return {
         success: true,
@@ -97,10 +95,10 @@ export class RoleService {
 
   async removeById(id: number) {
     try {
-      const result = await this.db.role.update({
-        where: { id },
-        data: { isDeleted: true },
-      });
+      const result = await super.update(
+        { id },
+        { isDeleted: true },
+      );
 
       return {
         success: true,

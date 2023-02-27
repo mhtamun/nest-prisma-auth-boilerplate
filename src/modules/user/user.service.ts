@@ -1,23 +1,31 @@
-import { Injectable } from '@nestjs/common';
-import * as _ from 'lodash';
-import { DbService } from 'src/db/db.service';
-import { HashService } from 'src/util/hash.service';
 import {
-  SignInUserDto,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { HashService } from 'src/util/hash.service';
+import BaseService from '../base.service';
+import {
   CreateUserDto,
+  SignInUserDto,
   UpdateUserDto,
 } from './dto';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class UserService {
-  constructor(
-    private readonly db: DbService,
-    private readonly hash: HashService,
-    private readonly jwt: JwtService,
-    private readonly config: ConfigService,
-  ) {}
+export class UserService extends BaseService {
+  @Inject()
+  private readonly hash: HashService;
+
+  @Inject()
+  private readonly jwt: JwtService;
+
+  @Inject()
+  private readonly config: ConfigService;
+
+  constructor() {
+    super('user');
+  }
 
   signToken(email: string): Promise<string> {
     const payload = {
@@ -32,11 +40,9 @@ export class UserService {
 
   async signIn(dto: SignInUserDto) {
     try {
-      const user = await this.db.user.findFirst({
-        where: {
-          isDeleted: false,
-          email: dto.email,
-        },
+      const user = await super.readFirst({
+        isDeleted: false,
+        email: dto.email,
       });
 
       const credentialNotCorrectError = {
@@ -83,19 +89,17 @@ export class UserService {
     }
   }
 
-  async create(dto: CreateUserDto) {
+  async save(dto: CreateUserDto) {
     try {
       const hashedPassword =
         await this.hash.generateHash(
           dto.password,
         );
 
-      const user = await this.db.user.create({
-        data: {
-          ...dto,
-          password: hashedPassword,
-          isDeleted: false,
-        },
+      const user = await super.create({
+        ...dto,
+        password: hashedPassword,
+        isDeleted: false,
       });
 
       delete user.password;
@@ -116,8 +120,8 @@ export class UserService {
 
   async getAll() {
     try {
-      const result = await this.db.user.findMany({
-        where: { isDeleted: false },
+      const result = await super.readMany({
+        isDeleted: false,
       });
 
       return {
@@ -134,11 +138,10 @@ export class UserService {
 
   async getById(id: number) {
     try {
-      const result = await this.db.user.findFirst(
-        {
-          where: { isDeleted: false, id },
-        },
-      );
+      const result = await super.readFirst({
+        id,
+        isDeleted: false,
+      });
 
       return {
         success: true,
@@ -157,12 +160,12 @@ export class UserService {
 
   async editById(id: number, dto: UpdateUserDto) {
     try {
-      const result = await this.db.user.update({
-        where: { id },
-        data: {
+      const result = await super.update(
+        { id },
+        {
           ...dto,
         },
-      });
+      );
 
       return {
         success: true,
@@ -178,10 +181,10 @@ export class UserService {
 
   async removeById(id: number) {
     try {
-      const result = await this.db.user.update({
-        where: { id },
-        data: { isDeleted: true },
-      });
+      const result = await super.update(
+        { id },
+        { isDeleted: true },
+      );
 
       return {
         success: true,

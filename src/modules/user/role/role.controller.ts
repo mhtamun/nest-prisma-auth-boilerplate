@@ -9,6 +9,7 @@ import {
   Param,
   Delete,
   Put,
+  Inject,
 } from '@nestjs/common';
 import { PermissionGuard } from '../../auth/guard';
 import { RoleService } from './role.service';
@@ -19,10 +20,11 @@ const moduleName = 'role-permission';
 
 @Controller('roles')
 export class RoleController {
-  constructor(
-    private readonly roleService: RoleService,
-    private readonly responseService: ResponseService,
-  ) {}
+  @Inject()
+  private readonly roleService: RoleService;
+
+  @Inject()
+  private readonly responseService: ResponseService;
 
   @UseGuards(
     PermissionGuard(moduleName, 'create'),
@@ -30,7 +32,7 @@ export class RoleController {
   @HttpCode(HttpStatus.OK)
   @Post('')
   async create(@Body() dto: CreateRoleDto) {
-    const result = await this.roleService.create(
+    const result = await this.roleService.save(
       dto,
     );
 

@@ -1,6 +1,7 @@
 import {
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
 } from '@nestjs/common';
 import * as _ from 'lodash';
@@ -15,9 +16,8 @@ interface Result {
 
 @Injectable()
 export class ResponseService {
-  constructor(
-    private readonly errorService: ErrorService,
-  ) {}
+  @Inject()
+  private readonly errorService: ErrorService;
 
   getSuccessFrame(message: string, data: any) {
     return {
