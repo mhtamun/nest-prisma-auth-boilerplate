@@ -14,7 +14,7 @@ import {
 import { PermissionGuard } from '../../auth/guard';
 import { RoleService } from './role.service';
 import { ResponseService } from 'src/util/response.service';
-import { CreateRoleDto } from '../dto';
+import { CreateRoleDto } from './dto';
 
 const moduleName = 'role-permission';
 

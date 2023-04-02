@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as _ from 'lodash';
 import BaseService from 'src/modules/base.service';
-import { CreateRoleDto } from '../dto';
+import { CreateRoleDto } from './dto';
 
 @Injectable()
 export class RoleService extends BaseService {

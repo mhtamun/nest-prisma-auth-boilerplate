@@ -18,7 +18,7 @@ import { ConstantService } from 'src/util/constant.service';
 import {
   CreatePermissionDto,
   UpdatePermissionDto,
-} from '../dto';
+} from './dto';
 
 const moduleName = 'role-permission';
 

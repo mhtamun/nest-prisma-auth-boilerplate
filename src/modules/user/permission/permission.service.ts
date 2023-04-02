@@ -9,7 +9,7 @@ import { ConstantService } from 'src/util/constant.service';
 import {
   CreatePermissionDto,
   UpdatePermissionDto,
-} from '../dto';
+} from './dto';
 
 @Injectable()
 export class PermissionService extends BaseService {
