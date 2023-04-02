@@ -11,12 +11,13 @@ import {
   Put,
   Inject,
 } from '@nestjs/common';
-import { PermissionGuard } from '../../auth/guard';
 import { RoleService } from './role.service';
 import { ResponseService } from 'src/util/response.service';
+import { ModulePermission } from 'src/modules/auth/decorator';
+import { PermissionGuard } from '../../auth/guard';
 import { CreateRoleDto } from './dto';
 
-const moduleName = 'role-permission';
+export const moduleName = 'role-permission';
 
 @Controller('roles')
 export class RoleController {
@@ -26,9 +27,8 @@ export class RoleController {
   @Inject()
   private readonly responseService: ResponseService;
 
-  @UseGuards(
-    PermissionGuard(moduleName, 'create'),
-  )
+  @ModulePermission(moduleName, 'create')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Post('')
   async create(@Body() dto: CreateRoleDto) {
@@ -41,7 +41,8 @@ export class RoleController {
     );
   }
 
-  @UseGuards(PermissionGuard(moduleName, 'read'))
+  @ModulePermission(moduleName, 'read')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('')
   async readAll() {
@@ -53,7 +54,8 @@ export class RoleController {
     );
   }
 
-  @UseGuards(PermissionGuard(moduleName, 'read'))
+  @ModulePermission(moduleName, 'read')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get(':id')
   async readById(@Param('id') id) {
@@ -66,9 +68,8 @@ export class RoleController {
     );
   }
 
-  @UseGuards(
-    PermissionGuard(moduleName, 'update'),
-  )
+  @ModulePermission(moduleName, 'update')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Put(':id')
   async updateById(
@@ -86,9 +87,8 @@ export class RoleController {
     );
   }
 
-  @UseGuards(
-    PermissionGuard(moduleName, 'delete'),
-  )
+  @ModulePermission(moduleName, 'delete')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Delete(':id')
   async deleteById(@Param('id') id) {

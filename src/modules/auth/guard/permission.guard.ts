@@ -1,56 +1,55 @@
 import {
+  Injectable,
   CanActivate,
   ExecutionContext,
-  mixin,
-  Type,
 } from '@nestjs/common';
-import { JwtGuard } from './jwt.guard';
+import { Reflector } from '@nestjs/core';
 import * as _ from 'lodash';
+import { JwtGuard } from '.';
 
-export const PermissionGuard = (
-  moduleName: string,
-  permissionType: string,
-): Type<CanActivate> => {
-  class PermissionGuardMixin extends JwtGuard {
-    constructor() {
-      super();
-    }
-
-    async canActivate(context: ExecutionContext) {
-      await super.canActivate(context);
-
-      const request = context
-        .switchToHttp()
-        .getRequest();
-
-      // console.debug(
-      //   'request -> user',
-      //   request.user,
-      // );
-
-      const { permissions } = request.user.role;
-
-      if (
-        !_.some(permissions, (permission) => {
-          return (
-            _.isEqual(
-              permission.moduleName,
-              moduleName,
-            ) &&
-            _.isEqual(
-              permission.permissionType,
-              permissionType,
-            )
-          );
-        })
-      )
-        return false;
-
-      return true;
-    }
+@Injectable()
+export class PermissionGuard
+  extends JwtGuard
+  implements CanActivate
+{
+  constructor(private reflector: Reflector) {
+    super();
   }
 
-  return mixin(PermissionGuardMixin);
-};
+  async canActivate(
+    context: ExecutionContext,
+  ): Promise<boolean> {
+    await super.canActivate(context);
 
-export default PermissionGuard;
+    const modulePermission =
+      this.reflector.get<string>(
+        'ModulePermission',
+        context.getHandler(),
+      );
+
+    const request = context
+      .switchToHttp()
+      .getRequest();
+
+    const { role } = request.user;
+    const { permissions } = role;
+
+    if (
+      !_.some(permissions, (permission) => {
+        return (
+          _.isEqual(
+            permission.moduleName,
+            modulePermission[0],
+          ) &&
+          _.isEqual(
+            permission.permissionType,
+            modulePermission[1],
+          )
+        );
+      })
+    )
+      return false;
+
+    return true;
+  }
+}

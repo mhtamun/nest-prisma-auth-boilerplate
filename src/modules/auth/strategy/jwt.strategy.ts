@@ -30,13 +30,18 @@ export class JwtStrategy extends PassportStrategy(
     try {
       const user = await this.db.user.findFirst({
         where: {
-          isDeleted: false,
           email: payload.email,
+          isDeleted: false,
+          role: {
+            isDeleted: false,
+          },
         },
         include: {
           role: {
             include: {
-              permissions: true,
+              permissions: {
+                where: { isDeleted: false },
+              },
             },
           },
         },
