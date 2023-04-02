@@ -15,6 +15,7 @@ CREATE TABLE "Permission" (
     "roleId" INTEGER NOT NULL,
     "moduleName" TEXT NOT NULL,
     "permissionType" TEXT NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -28,6 +29,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "roleId" INTEGER NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
