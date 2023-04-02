@@ -3,7 +3,6 @@ import {
   ExecutionContext,
   mixin,
   Type,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtGuard } from './jwt.guard';
 import * as _ from 'lodash';
@@ -24,7 +23,12 @@ export const PermissionGuard = (
         .switchToHttp()
         .getRequest();
 
-      const { permissions } = request.user;
+      // console.debug(
+      //   'request -> user',
+      //   request.user,
+      // );
+
+      const { permissions } = request.user.role;
 
       if (
         !_.some(permissions, (permission) => {
