@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import {
   ExtractJwt,
@@ -33,44 +30,53 @@ export class JwtStrategy extends PassportStrategy(
     try {
       const user = await this.db.user.findFirst({
         where: {
-          isDeleted: false,
           email: payload.email,
+          isDeleted: false,
+          role: {
+            isDeleted: false,
+          },
+        },
+        include: {
+          role: {
+            include: {
+              permissions: {
+                where: { isDeleted: false },
+              },
+            },
+          },
         },
       });
+
+      // console.debug('user', user);
 
       if (!user) {
         return false;
       }
 
-      const role = await this.db.role.findFirst({
-        where: {
-          isDeleted: false,
-          id: user.roleId,
-        },
-      });
+      const role = user.role;
+
+      // console.debug('role', role);
 
       if (!role) {
         return false;
       }
 
-      const permissions =
-        await this.db.permission.findMany({
-          where: { roleId: user.roleId },
-        });
+      const permissions = user.role.permissions;
 
-      if (
-        !permissions ||
-        permissions.length === 0
-      ) {
+      // console.debug('permissions', permissions);
+
+      if (!permissions) {
+        return false;
+      }
+
+      if (permissions.length === 0) {
         return false;
       }
 
       delete user.password;
 
       return {
-        about: user,
-        role,
-        permissions,
+        ...user,
       };
     } catch (error) {
       console.error('error', error);

@@ -11,16 +11,16 @@ import {
   Put,
   Inject,
 } from '@nestjs/common';
-import { PermissionGuard } from '../../auth/guard';
+
 import { PermissionService } from './permission.service';
 import { ResponseService } from 'src/util/response.service';
-import { ConstantService } from 'src/util/constant.service';
+import { moduleName } from '../role/role.controller';
+import { ModulePermission } from 'src/modules/auth/decorator';
+import { PermissionGuard } from '../../auth/guard';
 import {
   CreatePermissionDto,
   UpdatePermissionDto,
-} from '../dto';
-
-const moduleName = 'role-permission';
+} from './dto';
 
 @Controller()
 export class PermissionController {
@@ -30,14 +30,10 @@ export class PermissionController {
   @Inject()
   private readonly responseService: ResponseService;
 
-  @Inject()
-  private readonly constant: ConstantService;
-
-  @UseGuards(
-    PermissionGuard(moduleName, 'create'),
-  )
+  @ModulePermission(moduleName, 'create')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
-  @Post('permissions')
+  @Post('api/v1/permissions')
   async create(@Body() dto: CreatePermissionDto) {
     const result =
       await this.permissionService.save(dto);
@@ -47,9 +43,10 @@ export class PermissionController {
     );
   }
 
-  @UseGuards(PermissionGuard(moduleName, 'read'))
+  @ModulePermission(moduleName, 'read')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
-  @Get('permissions/modules/names')
+  @Get('api/v1/permission-modules')
   async readAllModuleNames() {
     const result =
       await this.permissionService.getAllModuleNames();
@@ -59,9 +56,10 @@ export class PermissionController {
     );
   }
 
-  @UseGuards(PermissionGuard(moduleName, 'read'))
+  @ModulePermission(moduleName, 'read')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
-  @Get('permissions/types/names')
+  @Get('api/v1/permission-types')
   async readAllPermissionTypes() {
     const result =
       await this.permissionService.getAllPermissionTypes();
@@ -71,9 +69,10 @@ export class PermissionController {
     );
   }
 
-  @UseGuards(PermissionGuard(moduleName, 'read'))
+  @ModulePermission(moduleName, 'read')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
-  @Get('permissions')
+  @Get('api/v1/permissions')
   async readAll() {
     const result =
       await this.permissionService.getAll(null);
@@ -83,9 +82,10 @@ export class PermissionController {
     );
   }
 
-  @UseGuards(PermissionGuard(moduleName, 'read'))
+  @ModulePermission(moduleName, 'read')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
-  @Get('roles/:roleId/permissions')
+  @Get('api/v1/roles/:roleId/permissions')
   async readAllByRole(
     @Param('roleId') roleId: string,
   ) {
@@ -99,9 +99,10 @@ export class PermissionController {
     );
   }
 
-  @UseGuards(PermissionGuard(moduleName, 'read'))
+  @ModulePermission(moduleName, 'read')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
-  @Get('permissions/:id')
+  @Get('api/v1/permissions/:id')
   async readById(@Param('id') id) {
     const result =
       await this.permissionService.getById(
@@ -113,11 +114,10 @@ export class PermissionController {
     );
   }
 
-  @UseGuards(
-    PermissionGuard(moduleName, 'update'),
-  )
+  @ModulePermission(moduleName, 'update')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
-  @Put('permissions/:id')
+  @Put('api/v1/permissions/:id')
   async updateById(
     @Param('id') id,
     @Body() dto: UpdatePermissionDto,
@@ -133,11 +133,10 @@ export class PermissionController {
     );
   }
 
-  @UseGuards(
-    PermissionGuard(moduleName, 'delete'),
-  )
+  @ModulePermission(moduleName, 'delete')
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
-  @Delete('permissions/:id')
+  @Delete('api/v1/permissions/:id')
   async deleteById(@Param('id') id) {
     const result =
       await this.permissionService.removeById(

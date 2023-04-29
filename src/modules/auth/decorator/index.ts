@@ -1,6 +1,7 @@
 import {
   createParamDecorator,
   ExecutionContext,
+  SetMetadata,
 } from '@nestjs/common';
 
 export const GetUser = createParamDecorator(
@@ -23,3 +24,7 @@ export const GetUser = createParamDecorator(
     return request.user;
   },
 );
+
+export const ModulePermission = (
+  ...args: string[]
+) => SetMetadata('ModulePermission', args);

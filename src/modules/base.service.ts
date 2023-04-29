@@ -10,23 +10,22 @@ export default class BaseService {
     this.model = model;
   }
 
-  /*
-  # callback function definition
-  const callback = async (tx) => {
-    todo: code running in a transaction appears here
-  } 
-  */
-
-  async transact(callback: any) {
+  async transact(callback: any, data?: any) {
     try {
+      const txCallback = (
+        tx: Prisma.TransactionClient, // ORM will push this tx
+      ) => {
+        return callback(tx, this, data ?? null);
+      };
+
       const result = await this.db.$transaction(
-        callback,
+        txCallback,
         {
           maxWait: 5000,
-          timeout: 10000, // default: 5000
+          timeout: 5000,
         },
       );
-      console.debug('result', result);
+      // console.debug('result', result);
 
       return result;
     } catch (error) {
