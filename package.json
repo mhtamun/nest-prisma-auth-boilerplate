@@ -2,10 +2,14 @@
   "name": "nest-prisma-auth-boilerplate",
   "version": "1.0.0",
   "description": "A node.js based back-end template using nest.js framework for server-side operations and prisma as database manipulator with role based user management system including authentication.",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mhtamun/nest-prisma-auth-boilerplate.git"
+  },
   "author": {
     "name": "Maruf Hossain",
     "email": "mhtamun@gmail.com",
-    "url": "https://mhtamun.github.io/cv"
+    "url": "https://github.com/mhtamun"
   },
   "license": "UNLICENSED",
   "scripts": {
