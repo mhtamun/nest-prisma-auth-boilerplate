@@ -64,7 +64,7 @@ export class ResponseService {
 
   handleResponse(result: Result) {
     if (!result.success) {
-      console.error('error', result.error);
+      // console.error('error', result.error);
 
       const { name, message } =
         this.errorService.handleDbError(

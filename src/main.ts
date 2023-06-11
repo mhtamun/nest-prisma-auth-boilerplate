@@ -5,8 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 const config = new ConfigService();
 const port = config.get('PORT');
-
-console.debug({ port });
+// console.debug({ port });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,12 +13,15 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true }),
   );
+  app.enableCors({
+    origin: '*',
+    allowedHeaders: [
+      'Content-type',
+      'Authorization',
+    ],
+  });
 
-  await app.listen(
-    !port
-      ? 3456
-      : parseInt(config.get('PORT'), 10),
-  );
+  await app.listen(port ?? 3456);
 }
 
 bootstrap();
