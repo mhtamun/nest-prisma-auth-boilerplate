@@ -16,7 +16,10 @@ import {
   GetUser,
   ModulePermission,
 } from '../auth/decorator';
-import { PermissionGuard } from '../auth/guard';
+import {
+  JwtGuard,
+  PermissionGuard,
+} from '../auth/guard';
 import {
   SignInUserDto,
   CreateUserDto,
@@ -87,8 +90,7 @@ export class UserController {
     );
   }
 
-  @ModulePermission(moduleName, 'read')
-  @UseGuards(PermissionGuard)
+  @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
   @Get('api/v1/auth/profile')
   async readProfile(@GetUser() user: any) {
