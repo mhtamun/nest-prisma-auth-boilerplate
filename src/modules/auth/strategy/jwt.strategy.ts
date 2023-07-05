@@ -57,6 +57,11 @@ export class JwtStrategy extends PassportStrategy(
 
       // console.debug('role', role);
 
+      if (role.name === 'Super Admin')
+        return {
+          ...user,
+        };
+
       if (!role) {
         return false;
       }

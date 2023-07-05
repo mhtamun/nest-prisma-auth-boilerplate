@@ -32,6 +32,10 @@ export class PermissionGuard
       .getRequest();
 
     const { role } = request.user;
+    // console.debug({ role });
+
+    if (role.name === 'Super Admin') return true;
+
     const { permissions } = role;
 
     if (
