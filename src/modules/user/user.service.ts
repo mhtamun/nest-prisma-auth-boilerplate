@@ -134,9 +134,15 @@ export class UserService extends BaseService {
     try {
       const data = await super.transact(
         async (tx: Prisma.TransactionClient) => {
-          return await super.readMany(tx, {
-            isDeleted: false,
-          });
+          return await super.readMany(
+            tx,
+            {
+              isDeleted: false,
+            },
+            {
+              role: true,
+            },
+          );
         },
       );
 
