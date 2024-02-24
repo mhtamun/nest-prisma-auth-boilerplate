@@ -1,49 +1,61 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsString,
-  IsNumber,
-  IsPositive,
-} from 'class-validator';
+import { OmitType } from '@nestjs/mapped-types';
+import { Prisma } from '@prisma/client';
+import { IsEmail, IsString, IsNumber, IsPositive, Length, IsNotEmpty, IsEmpty, IsOptional } from 'class-validator';
 
 export class SignInUserDto {
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
+	@IsEmail()
+	@IsNotEmpty()
+	email: string;
 
-  @IsString()
-  @IsNotEmpty()
-  password: string;
+	@IsString()
+	@IsNotEmpty()
+	password: string;
 }
 
-export class CreateUserDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
+export class UserDto {
+	@IsString()
+	@IsNotEmpty()
+	name: string;
 
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
+	@IsEmail()
+	@IsNotEmpty()
+	email: string;
 
-  @IsString()
-  @IsNotEmpty()
-  password: string;
+	@IsString()
+	@IsNotEmpty()
+	password: string;
 
-  @IsNumber()
-  @IsPositive()
-  roleId: number;
+	@IsNumber()
+	@IsPositive()
+	@IsNotEmpty()
+	roleId: number;
+
+	@IsString()
+	@IsOptional()
+	phone?: string;
+
+	@IsString()
+	@Length(10, 17)
+	@IsOptional()
+	nid?: string;
+
+	@IsString()
+	@IsOptional()
+	dateOfBirth?: string;
+
+	@IsString()
+	@IsOptional()
+	gender?: string;
+
+	@IsString()
+	@IsOptional()
+	address?: string;
+
+	@IsString()
+	@IsNotEmpty()
+	status: string;
 }
 
-export class UpdateUserDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
+export class UserCreateDto extends OmitType(UserDto, ['status']) {}
 
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
-
-  @IsNumber()
-  @IsPositive()
-  roleId: number;
-}
+export class UserUpdateDto extends OmitType(UserDto, ['password']) {}

@@ -11,18 +11,18 @@ import {
 	Put,
 	Inject,
 } from '@nestjs/common';
-import { RoleService } from './role.service';
+import { FolderService } from './folder.service';
 import { ResponseService } from 'src/util/response.service';
 import { ModulePermission } from 'src/modules/auth/decorator';
-import { PermissionGuard } from '../../auth/guard';
-import { CreateRoleDto, UpdateRoleDto } from './dto';
+import { PermissionGuard } from '../auth/guard';
+import { CreateFolderDto, UpdateFolderDto } from './dto';
 
-export const moduleName = 'role-permission';
+export const moduleName = 'folder';
 
 @Controller('')
-export class RoleController {
+export class FolderController {
 	@Inject()
-	private readonly roleService: RoleService;
+	private readonly folderService: FolderService;
 
 	@Inject()
 	private readonly responseService: ResponseService;
@@ -30,9 +30,9 @@ export class RoleController {
 	@ModulePermission(moduleName, 'create')
 	@UseGuards(PermissionGuard)
 	@HttpCode(HttpStatus.OK)
-	@Post('api/v1/roles')
-	async create(@Body() dto: CreateRoleDto) {
-		const result = await this.roleService.save(dto);
+	@Post('api/v1/folders')
+	async create(@Body() dto: CreateFolderDto) {
+		const result = await this.folderService.save(dto);
 
 		return this.responseService.handleResponse(result);
 	}
@@ -40,9 +40,9 @@ export class RoleController {
 	@ModulePermission(moduleName, 'read')
 	@UseGuards(PermissionGuard)
 	@HttpCode(HttpStatus.OK)
-	@Get('api/v1/roles')
+	@Get('api/v1/folders')
 	async readAll() {
-		const result = await this.roleService.getAll();
+		const result = await this.folderService.getAll();
 
 		return this.responseService.handleResponse(result);
 	}
@@ -50,9 +50,9 @@ export class RoleController {
 	@ModulePermission(moduleName, 'read')
 	@UseGuards(PermissionGuard)
 	@HttpCode(HttpStatus.OK)
-	@Get('api/v1/roles/:id')
+	@Get('api/v1/folders/:id')
 	async readById(@Param('id') id: string) {
-		const result = await this.roleService.getById(parseInt(id));
+		const result = await this.folderService.getById(parseInt(id));
 
 		return this.responseService.handleResponse(result);
 	}
@@ -60,9 +60,9 @@ export class RoleController {
 	@ModulePermission(moduleName, 'update')
 	@UseGuards(PermissionGuard)
 	@HttpCode(HttpStatus.OK)
-	@Put('api/v1/roles/:id')
-	async updateById(@Param('id') id, @Body() dto: UpdateRoleDto) {
-		const result = await this.roleService.editById(parseInt(id), dto);
+	@Put('api/v1/folders/:id')
+	async updateById(@Param('id') id, @Body() dto: UpdateFolderDto) {
+		const result = await this.folderService.editById(parseInt(id), dto);
 
 		return this.responseService.handleResponse(result);
 	}
@@ -70,9 +70,9 @@ export class RoleController {
 	@ModulePermission(moduleName, 'delete')
 	@UseGuards(PermissionGuard)
 	@HttpCode(HttpStatus.OK)
-	@Delete('api/v1/roles/:id')
+	@Delete('api/v1/folders/:id')
 	async deleteById(@Param('id') id) {
-		const result = await this.roleService.removeById(parseInt(id));
+		const result = await this.folderService.removeById(parseInt(id));
 
 		return this.responseService.handleResponse(result);
 	}

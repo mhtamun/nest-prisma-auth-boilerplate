@@ -4,94 +4,36 @@ import { HashService } from '../src/util/hash.service';
 const hash = new HashService();
 
 async function main() {
-  const role = await prisma.role.create({
-    data: {
-      name: 'Super Admin',
-    },
-  });
+	try {
+		const role = await prisma.role.create({
+			data: {
+				id: 1,
+				name: 'Super Admin',
+			},
+		});
 
-  // console.debug({ role });
-
-  // await prisma.permission.create({
-  //   data: {
-  //     roleId: role.id,
-  //     moduleName: 'user',
-  //     permissionType: 'create',
-  //   },
-  // });
-
-  // await prisma.permission.create({
-  //   data: {
-  //     roleId: role.id,
-  //     moduleName: 'user',
-  //     permissionType: 'read',
-  //   },
-  // });
-
-  // await prisma.permission.create({
-  //   data: {
-  //     roleId: role.id,
-  //     moduleName: 'user',
-  //     permissionType: 'update',
-  //   },
-  // });
-
-  // await prisma.permission.create({
-  //   data: {
-  //     roleId: role.id,
-  //     moduleName: 'user',
-  //     permissionType: 'delete',
-  //   },
-  // });
-
-  // await prisma.permission.create({
-  //   data: {
-  //     roleId: role.id,
-  //     moduleName: 'role-permission',
-  //     permissionType: 'create',
-  //   },
-  // });
-
-  // await prisma.permission.create({
-  //   data: {
-  //     roleId: role.id,
-  //     moduleName: 'role-permission',
-  //     permissionType: 'read',
-  //   },
-  // });
-
-  // await prisma.permission.create({
-  //   data: {
-  //     roleId: role.id,
-  //     moduleName: 'role-permission',
-  //     permissionType: 'update',
-  //   },
-  // });
-
-  // await prisma.permission.create({
-  //   data: {
-  //     roleId: role.id,
-  //     moduleName: 'role-permission',
-  //     permissionType: 'delete',
-  //   },
-  // });
-
-  await prisma.user.create({
-    data: {
-      name: 'Maruf Hossain',
-      email: 'mhtamun@gmail.com',
-      password: await hash.generateHash('123456'),
-      roleId: role.id,
-    },
-  });
+		await prisma.user.create({
+			data: {
+				name: 'Super Admin',
+				email: 'super.admin@example.com',
+				password: await hash.generateHash('password'),
+				roleId: role.id,
+				phone: '',
+				nid: '',
+				status: 'ACTIVE',
+			},
+		});
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 main()
-  .catch((error) => {
-    console.error(error);
+	.catch(error => {
+		console.error(error);
 
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+		process.exit(1);
+	})
+	.finally(async () => {
+		await prisma.$disconnect();
+	});

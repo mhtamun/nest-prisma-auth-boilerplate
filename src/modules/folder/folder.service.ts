@@ -2,19 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as _ from 'lodash';
 import BaseService from 'src/modules/base.service';
-import { CreateRoleDto, UpdateRoleDto } from './dto';
+import { CreateFolderDto, UpdateFolderDto } from './dto';
+import slugify from 'slugify';
 
 @Injectable()
-export class RoleService extends BaseService {
+export class FolderService extends BaseService {
 	constructor() {
-		super('role');
+		super('folder');
 	}
 
-	async save(dto: CreateRoleDto) {
+	async save(dto: CreateFolderDto) {
 		try {
 			const data = await super.transact(async (tx: Prisma.TransactionClient) => {
 				return await super.create(tx, {
 					...dto,
+					slug: slugify(dto.name, {
+						lower: true, // convert to lower case, defaults to `false`
+						strict: true, // strip special characters except replacement, defaults to `false`
+					}),
+					name: dto.name,
 				});
 			});
 
@@ -33,9 +39,7 @@ export class RoleService extends BaseService {
 	async getAll() {
 		try {
 			const data = await super.transact(async (tx: Prisma.TransactionClient) => {
-				return await super.readMany(tx, null, {
-					permissions: true,
-				});
+				return await super.readMany(tx);
 			});
 
 			return {
@@ -53,13 +57,7 @@ export class RoleService extends BaseService {
 	async getById(id: number) {
 		try {
 			const data = await super.transact(async (tx: Prisma.TransactionClient) => {
-				return await super.readFirst(
-					tx,
-					{ id },
-					{
-						permissions: true,
-					}
-				);
+				return await super.readFirst(tx, { id });
 			});
 
 			return {
@@ -74,7 +72,7 @@ export class RoleService extends BaseService {
 		}
 	}
 
-	async editById(id: number, dto: UpdateRoleDto) {
+	async editById(id: number, dto: UpdateFolderDto) {
 		try {
 			const data = await super.transact(async (tx: Prisma.TransactionClient) => {
 				return await super.update(
@@ -82,6 +80,11 @@ export class RoleService extends BaseService {
 					{ id },
 					{
 						...dto,
+						slug: slugify(dto.name, {
+							lower: true, // convert to lower case, defaults to `false`
+							strict: true, // strip special characters except replacement, defaults to `false`
+						}),
+						name: dto.name,
 					}
 				);
 			});

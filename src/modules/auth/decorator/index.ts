@@ -1,30 +1,13 @@
-import {
-  createParamDecorator,
-  ExecutionContext,
-  SetMetadata,
-} from '@nestjs/common';
+import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/common';
 
-export const GetUser = createParamDecorator(
-  (
-    data:
-      | 'about'
-      | 'role'
-      | 'permissions'
-      | undefined,
-    ctx: ExecutionContext,
-  ) => {
-    const request: Express.Request = ctx
-      .switchToHttp()
-      .getRequest();
+export const GetUser = createParamDecorator((data: string | null, ctx: ExecutionContext) => {
+	const request: Express.Request = ctx.switchToHttp().getRequest();
 
-    if (data) {
-      return request.user[data];
-    }
+	if (data) {
+		return request.user[data];
+	}
 
-    return request.user;
-  },
-);
+	return request.user;
+});
 
-export const ModulePermission = (
-  ...args: string[]
-) => SetMetadata('ModulePermission', args);
+export const ModulePermission = (...args: string[]) => SetMetadata('ModulePermission', args);

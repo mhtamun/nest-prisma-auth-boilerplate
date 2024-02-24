@@ -1,92 +1,50 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import {
-  ExtractJwt,
-  Strategy,
-} from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { DbService } from 'src/db/db.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(
-  Strategy,
-  'jwt',
-) {
-  constructor(
-    config: ConfigService,
-    private readonly db: DbService,
-  ) {
-    super({
-      jwtFromRequest:
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKey: config.get('JWT_SECRET'),
-    });
-  }
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+	constructor(readonly config: ConfigService, private readonly db: DbService) {
+		super({
+			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+			ignoreExpiration: false,
+			secretOrKey: config.get('JWT_SECRET'),
+		});
+	}
 
-  async validate(payload: {
-    email: string;
-  }): Promise<any> {
-    try {
-      const user = await this.db.user.findFirst({
-        where: {
-          email: payload.email,
-          isDeleted: false,
-          role: {
-            isDeleted: false,
-          },
-        },
-        include: {
-          role: {
-            include: {
-              permissions: {
-                where: { isDeleted: false },
-              },
-            },
-          },
-        },
-      });
+	async validate(payload: { email: string }): Promise<any> {
+		try {
+			const user = await this.db.user.findFirst({
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					phone: true,
+					nid: true,
+					dateOfBirth: true,
+					gender: true,
+					address: true,
+					role: {
+						select: { name: true, permissions: { select: { moduleName: true, permissionType: true } } },
+					},
+					status: true,
+				},
+				where: {
+					email: payload.email,
+					status: 'ACTIVE',
+				},
+			});
+			// console.debug('user', user);
 
-      // console.debug('user', user);
+			return {
+				...user,
+			};
+		} catch (error) {
+			console.error('error', error);
 
-      if (!user) {
-        return false;
-      }
-
-      const role = user.role;
-
-      // console.debug('role', role);
-
-      if (role.name === 'Super Admin')
-        return {
-          ...user,
-        };
-
-      if (!role) {
-        return false;
-      }
-
-      const permissions = user.role.permissions;
-
-      // console.debug('permissions', permissions);
-
-      if (!permissions) {
-        return false;
-      }
-
-      if (permissions.length === 0) {
-        return false;
-      }
-
-      delete user.password;
-
-      return {
-        ...user,
-      };
-    } catch (error) {
-      console.error('error', error);
-
-      return false;
-    }
-  }
+			return false;
+		}
+	}
 }

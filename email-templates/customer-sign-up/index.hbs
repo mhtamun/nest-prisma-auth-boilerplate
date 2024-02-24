@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Example Email Verification</title>
+</head>
+
+<body style="
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+    ">
+	<div style="
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      ">
+		<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="
+          margin: auto;
+          max-width: 600px;
+          background-color: #fefdf9;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        ">
+			<tr>
+				<td>
+					<img src="https://example.com/assets/images/example-1920x720.png" alt="" width="200px"
+						height="auto" />
+				</td>
+			</tr>
+			<tr>
+				<td style="padding: 20px 0">
+					<p style="font-size: 18px; color: #555555">
+						Dear, {{customerName}}
+					</p>
+					<p style="font-size: 18px; color: #555555">
+						Welcome to Example, your gateway to unforgettable travel
+						experiences!
+					</p>
+					<p style="font-size: 18px; color: #555555">
+						To ensure the security of your account and unlock exclusive
+						benefits, please verify your email address by clicking the link
+						below:
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td align="center" style="padding: 20px 0">
+					<a href="{{verificationLink}}" target="_blank">
+						{{verificationLink}}
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td align="center" style="padding: 20px 0">
+					<p style="font-size: 18px; color: #555555">
+						Or press the button below
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td align="center" style="padding: 20px 0">
+					<a href="{{verificationLink}}" target="_blank" style="
+                cursor: pointer;
+                display: inline-block;
+                padding: 12px 24px;
+                background-color: #2e2e4c;
+                color: #fefdf3;
+                text-decoration: none;
+                border-radius: 0.5rem;
+                font-size: 18px;
+              ">
+						Verify Your Email
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="padding: 20px 0">
+					<p style="font-size: 18px; color: #555555">
+						By confirming your email, you'll stay updated on our latest
+						promotions, travel tips, and exciting destinations. Get ready to
+						embark on a journey filled with amazing adventures!
+					</p>
+					<p style="font-size: 18px; color: #555555">
+						If you have any questions or need assistance, feel free to reach
+						out to our customer support team at support@example.com.
+					</p>
+					<p style="font-size: 18px; color: #555555">
+						Thank you for choosing Example. We look forward to being a part
+						of your travel stories!
+					</p>
+					<p style="font-size: 18px; color: #555555">Safe travels,</p>
+					<p style="font-size: 18px; color: #555555">Example Team</p>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+
+</html>

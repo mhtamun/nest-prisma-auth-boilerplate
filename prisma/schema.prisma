@@ -12,8 +12,7 @@ datasource db {
 
 model Role {
   id        Int      @id @default(autoincrement())
-  name      String   @unique
-  isDeleted Boolean  @default(false)
+  name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -26,22 +25,81 @@ model Permission {
   roleId         Int
   moduleName     String
   permissionType String
-  isDeleted      Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   role Role @relation(fields: [roleId], references: [id])
+
+  @@unique([roleId, moduleName, permissionType])
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  BLOCKED
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  roleId    Int
-  isDeleted Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              Int        @id @default(autoincrement())
+  name            String
+  email           String     @unique
+  password        String
+  roleId          Int
+  otp             String?
+  otpAttemptCount Int?       @default(0)
+  phone           String?    @db.VarChar(17)
+  nid             String?    @db.VarChar(17)
+  dateOfBirth     String?
+  gender          Gender?    @default(OTHER)
+  address         String?    @db.Text
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  status          UserStatus @default(PENDING)
 
   role Role @relation(fields: [roleId], references: [id])
+}
+
+enum GeneralStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Folder {
+  id        Int           @id @default(autoincrement())
+  slug      String        @unique @db.Text
+  name      String        @unique @db.Text
+  status    GeneralStatus @default(INACTIVE)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  files File[]
+}
+
+enum FileType {
+  UNSPECIFIED
+  IMAGE
+  GIF
+  VIDEO
+  DOCUMENT
+}
+
+model File {
+  id        Int           @id @default(autoincrement())
+  folderId  Int
+  name      String
+  type      FileType      @default(UNSPECIFIED)
+  url       String        @db.Text
+  status    GeneralStatus @default(INACTIVE)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  folder Folder @relation(fields: [folderId], references: [id])
+
+  @@unique([name, folderId])
 }

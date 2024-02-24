@@ -1,0 +1,71 @@
+<html>
+
+<head>
+    <title>Payment Request for Your Confirmed Trip Reservation</title>
+</head>
+
+<body>
+    <p>Dear {{customerName}},</p>
+
+    <p>
+        Thank you for choosing Example for your travel plans. We look forward to
+        providing you with an unforgettable experience.
+    </p>
+
+    <p>
+        We're excited to confirm your trip reservation! Below, you'll find the
+        details of your booking and a secure payment gateway link to complete the
+        payment for your upcoming adventure.
+    </p>
+
+    <h3>Trip Details:</h3>
+    <ul>
+        <li>Name: {{tripName}}</li>
+        <li>Location: {{tripLocation}}</li>
+        <li>Duration: {{tripDuration}}</li>
+        <li>Start Date: {{tripStartDate}}</li>
+        <li>End Date: {{tripEndDate}}</li>
+        <li>Price per person: {{pricePerPerson}}</li>
+        <li>Number of Travelers: {{numberOfTravelers}}</li>
+        <li>Total Trip Cost: BDT {{totalCost}}</li>
+    </ul>
+
+    <h3>Payment Information:</h3>
+    <p>
+        To settle the invoice <strong>[#{{invoiceNumber}}]</strong>, please click
+        on the following secure payment gateway link:
+    </p>
+    <a href="{{paymentGatewayLink}}" target="_blank">{{paymentGatewayLink}}</a>
+
+    <h4 style="color: red">
+        Please note that your reservation
+        <strong>[#{{reservationNumber}}]</strong> will be considered invalid if
+        payment is not received within the next 30 minutes from the time this
+        email is sent. Act promptly to ensure your booking is confirmed.
+    </h4>
+
+    <p>
+        If you have any questions or need assistance with the payment process,
+        please do not hesitate to reach out to our customer support team at
+        <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>
+        or
+        <a href="tel:{{supportNumber}}">{{supportNumber}}</a>.
+    </p>
+
+    <p>
+        Thank you for booking <strong>[#{{bookingNumber}}]</strong> your trip
+        through Example. Please find below attachments the cancellation and
+        refund policy.
+    </p>
+
+    <p>Safe travels!</p>
+
+    <p>
+        Warm regards,<br /><br />
+        <a href="https://example.com">Example Team</a><br /><br />
+        Email: <a href="mailto:{{informationEmail}}">{{informationEmail}}</a><br />
+        Phone: <a href="tel:{{informationNumber}}">{{informationNumber}}</a>
+    </p>
+</body>
+
+</html>

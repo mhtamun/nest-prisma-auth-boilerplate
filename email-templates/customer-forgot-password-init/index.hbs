@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Password Reset OTP for Example</title>
+</head>
+
+<body style="
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+    ">
+	<div style="
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      ">
+		<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="
+          margin: auto;
+          max-width: 600px;
+          background-color: #fefdf9;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        ">
+			<tr>
+				<td>
+					<img src="https://example.com/assets/images/example-1920x720.png" alt="" width="200px"
+						height="auto" />
+				</td>
+			</tr>
+			<tr>
+				<td style="padding: 10px 0">
+					<p style="font-size: 18px; color: #555555">
+						Dear, {{customerName}}
+					</p>
+					<p style="font-size: 18px; color: #555555">
+						We have received a request to reset the password associated with
+						your account on Example. To ensure the security of your account,
+						we are providing you with a one-time password (OTP) that you will
+						need to enter to complete the password reset process.
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td style="padding: 10px 0">
+					<span style="font-size: 18px; color: #555555"> Your OTP is: </span>
+					<span style="font-size: 18px; color: #555555">
+						{{customerOtp}}
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td style="padding: 10px 0">
+					<p style="font-size: 18px; color: #555555">
+						Please follow the steps below to reset your password:
+					</p>
+					<ol>
+						<li style="font-size: 18px; color: #555555">
+							Visit the Example
+							<a href="{{domain}}/sign-in/forgot-password/reset" target="_blank">password reset page</a>.
+						</li>
+						<li style="font-size: 18px; color: #555555">Enter your registered email address.</li>
+						<li style="font-size: 18px; color: #555555">Input the OTP code provided above.</li>
+						<li style="font-size: 18px; color: #555555">Set a new password for your account.</li>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td style="padding: 10px 0">
+					<p style="font-size: 18px; color: #555555">
+						If you have any questions or need assistance, feel free to reach
+						out to our customer support team at support@example.com.
+					</p>
+					<p style="font-size: 18px; color: #555555">
+						Thank you for choosing Example. Get ready to embark on a journey
+						filled with amazing adventures!
+					</p>
+					<p style="font-size: 18px; color: #555555">Safe travels,</p>
+					<p style="font-size: 18px; color: #555555">Example Team</p>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+
+</html>
